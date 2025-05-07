@@ -1,0 +1,13 @@
+Filesystem     1024-blocks     Used Available Capacity Mounted on
+udev               7972796        0   7972796       0% /dev
+tmpfs              1603772     2416   1601356       1% /run
+/dev/nvme0n1p6   146537412 90106660  48914236      65% /
+tmpfs              8018860    64844   7954016       1% /dev/shm
+efivarfs               256      163        89      65% /sys/firmware/efi/efivars
+tmpfs                 5120        0      5120       0% /run/lock
+tmpfs                 1024        0      1024       0% /run/credentials/systemd-journald.service
+tmpfs              8018860     4032   8014828       1% /tmp
+/dev/nvme0n1p1      262144   123780    138364      48% /boot/efi
+overlay          146537412 90106660  48914236      65% /var/lib/docker/overlay2/f729c26c3f50356bcb000f6e5982ccf92163c51ef944fb3d15d61552819420c5/merged
+overlay          146537412 90106660  48914236      65% /var/lib/docker/overlay2/e35b2032800364e7086bcb1dd99f51e679e6f051d755564b9f39fc072431f9ae/merged
+tmpfs              1603772      200   1603572       1% /run/user/1000
