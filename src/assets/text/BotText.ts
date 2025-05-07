@@ -12,13 +12,9 @@ export const BotText = {
 • Free: :memory_free
 
 💾 <strong>Disk</strong>
-• Total: 7.57 GB
-• Used: 1.69 GB
-• Free: 5.47 GB
-
-📡 <strong>Network</strong>
-• Upload: 6.88 MB/s
-• Download: 6.92 MB/s`,
+• Total: :disk_total
+• Used: :disk_used
+• Free: :disk_free`,
     cpu_overload_warning: `⚠️ <strong>CPU Usage Warning!</strong> <code>:cpu_usage</code>
 Detected on <code>:node_name</code>  
 
