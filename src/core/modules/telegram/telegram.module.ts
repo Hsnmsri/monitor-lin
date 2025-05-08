@@ -1,26 +1,32 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import { TelegrafModule } from 'nestjs-telegraf';
-import environment from 'src/environment/environment';
-import { Telegraf } from 'telegraf';
-
-let telegrafConfig: Partial<Telegraf.Options<any>> = {};
-// Check if the proxy is set in the environment
-if (environment.proxy.host && environment.proxy.port) {
-    telegrafConfig = {
-        telegram: {
-            agent: new HttpsProxyAgent(`http://${environment.proxy.host}:${environment.proxy.port}`)
-        }
-    }
-}
 
 @Module({
     imports: [
-        TelegrafModule.forRoot({
-            botName: environment.bot.name,
-            token: environment.bot.token,
-            options: telegrafConfig
-        })
-    ]
+        ConfigModule.forRoot({ isGlobal: true }),
+        TelegrafModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: async (config: ConfigService) => {
+                const proxyHost = config.get<string>('PROXY_HOST');
+                const proxyPort = config.get<string>('PROXY_PORT');
+                const telegrafConfig: any = {};
+
+                if (proxyHost && proxyPort) {
+                    telegrafConfig.telegram = {
+                        agent: new HttpsProxyAgent(`http://${proxyHost}:${proxyPort}`),
+                    };
+                }
+
+                return {
+                    botName: config.get<string>('BOT_NAME')!,
+                    token: config.get<string>('BOT_TOKEN')!,
+                    options: telegrafConfig,
+                };
+            },
+        }),
+    ],
 })
 export class TelegramModule { }
