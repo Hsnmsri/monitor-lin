@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { readFile } from 'fs/promises';
 import Cpu from 'src/core/models/Cpu.model';
 import CpuUsage from 'src/core/models/CpuUsage.model';
-import environment from 'src/environment/environment';
 import sleep from 'src/helpers/sleep';
 
 @Injectable()
@@ -116,13 +115,13 @@ export class CpuService {
 
     /**
      * Watch cpu for overload
-     * @param overloadCallback
+     * @param overloadCallback 
      */
     private async watch(overloadCallback: (cpuUsage: Cpu) => void) {
         while (this.watchStatus) {
             const cpuUsage: Cpu = await this.getUsage();
             if (cpuUsage.total_usage.total_usage_percent &&
-                (cpuUsage.total_usage.total_usage_percent > environment.node.cpu_limit)) overloadCallback(cpuUsage);
+                (cpuUsage.total_usage.total_usage_percent > Number(process.env['CPU_LIMIT']))) overloadCallback(cpuUsage);
 
             await sleep(this.watchDelayMS);
         }

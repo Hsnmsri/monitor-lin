@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { readFile } from 'fs/promises';
 import Memory from 'src/core/models/Memory.model';
-import environment from 'src/environment/environment';
 import sleep from 'src/helpers/sleep';
 
 @Injectable()
@@ -76,7 +75,7 @@ export class MemoryService {
     private async watch(overloadCallback: (memory: Memory) => void) {
         while (this.watchStatus) {
             const memoryUsage = await this.getUsage();
-            if (memoryUsage.usage_percent > environment.node.memory_limit) {
+            if (memoryUsage.usage_percent > Number(process.env['MEMORY_LIMIT'])) {
                 overloadCallback(memoryUsage);
             }
 

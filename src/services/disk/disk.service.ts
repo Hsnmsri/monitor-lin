@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { readFile } from 'fs/promises';
 import Disk from 'src/core/models/Disk.model';
-import environment from 'src/environment/environment';
 
 @Injectable()
 export class DiskService {
     private dfFilePath?: string;
 
     constructor() {
-        if (environment.node.disk_df_path) this.dfFilePath = environment.node.disk_df_path;
+        if (process.env['DISK_DF_PATH'] && process.env['DISK_DF_PATH'].trim() != "")
+            this.dfFilePath = process.env['DISK_DF_PATH'];
     }
 
     /**

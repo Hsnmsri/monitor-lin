@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { On, Start, Update } from 'nestjs-telegraf';
-import environment from 'src/environment/environment';
 import formatText from 'src/helpers/formatText';
 import { Context } from 'telegraf';
 import { CpuService } from '../cpu/cpu.service';
@@ -11,11 +10,17 @@ import { MemoryService } from '../memory/memory.service';
 import formatDataKB from 'src/helpers/formatDataKB';
 import Disk from 'src/core/models/Disk.model';
 import { DiskService } from '../disk/disk.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 @Update()
 export class TelegramService {
-    constructor(private cpuService: CpuService, private memoryService: MemoryService, private diskService: DiskService) { }
+    constructor(
+        private readonly cpuService: CpuService,
+        private readonly memoryService: MemoryService,
+        private readonly diskService: DiskService,
+        private readonly configService: ConfigService
+    ) { }
 
     @Start()
     private async onStart(context: Context) {
@@ -59,7 +64,7 @@ export class TelegramService {
      * @returns True if the user is an admin, otherwise false.
      */
     isAdmin(userId: number): boolean {
-        return environment.admin.findIndex(adminId => adminId == userId) != -1;
+        return (process.env['ADMINS']!.split(',')).findIndex(adminId => adminId == userId.toString()) != -1;
     }
 
     /**
@@ -74,7 +79,7 @@ export class TelegramService {
      */
     async sendGlobalWelcome(context: Context) {
         await context.reply(formatText('global_welcome', {
-            bot_name: environment.bot.name,
+            bot_name: process.env['BOT_NAME'] ?? "NOT_SET",
             user_id: context.from!.id.toString(),
         }), {
             parse_mode: 'HTML'
@@ -103,8 +108,10 @@ export class TelegramService {
         }), {
             reply_markup: {
                 keyboard: [
-                    [{ text: "status" }, { text: "watch", }, { text: "unwatch" }],
-                ]
+                    [{ text: "status" },],
+                    [{ text: "watch", }, { text: "unwatch" }],
+                ],
+                resize_keyboard: true,
             }
         });
     }
@@ -133,7 +140,7 @@ export class TelegramService {
     async sendCpuOverload(context: Context, cpuUsage: Cpu) {
         context.replyWithHTML(
             formatText('cpu_overload_warning', {
-                node_name: environment.node.name,
+                node_name: process.env['NODE_NAME'] ?? "NOT_SET",
                 cpu_usage: `${cpuUsage.total_usage.total_usage_percent}%`,
                 cpu_cores_usage: cpuUsage.cores.map(core => `${core.total_usage_percent}%`).join(" | "),
                 time: formatDate("YYYY/MM/DD HH:mm"),
@@ -149,7 +156,7 @@ export class TelegramService {
     async sendMemoryOverload(context: Context, memoryUsage: Memory) {
         context.replyWithHTML(
             formatText('memory_overload_warning', {
-                node_name: environment.node.name,
+                node_name: process.env['NODE_NAME'] ?? "NOT_SET",
                 memory_usage: `${memoryUsage.usage_percent}%`,
                 memory_total: formatDataKB(memoryUsage.total),
                 memory_available: formatDataKB(memoryUsage.available),
