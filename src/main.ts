@@ -1,35 +1,47 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import environment from './environment/environment';
 import { Logger } from '@nestjs/common';
-
 
 function beforeInitCheck(): boolean {
   try {
+    // Check Node
+    if (!process.env.NODE_NAME || process.env.NODE_NAME.trim() === '')
+      throw 'NODE_NAME is empty';
 
-    // Check node
-    if (environment.node.name == "") throw "Node name is empty";
-    if (environment.node.cpu_limit <= 0) throw "Node cpu limit is less than 0";
-    if (environment.node.memory_limit <= 0) throw "Node memory limit is less than 0";
-    if (environment.node.disk_df_path == "") throw "Node disk df path is empty";
+    if (!process.env.CPU_LIMIT || Number(process.env.CPU_LIMIT) <= 0)
+      throw 'CPU_LIMIT is missing or less than or equal to 0';
 
-    // Check bot
-    if (environment.bot.name == "") throw "Bot name is empty";
-    if (environment.bot.token == "") throw "Bot token is empty";
-    if (environment.bot.token.length < 10) throw "Bot token is invalid";
-    if (environment.bot.token.length > 100) throw "Bot token is invalid";
+    if (!process.env.MEMORY_LIMIT || Number(process.env.MEMORY_LIMIT) <= 0)
+      throw 'MEMORY_LIMIT is missing or less than or equal to 0';
 
-    // Check proxy
-    if (environment.proxy.host == "") throw "Proxy host is empty";
-    if (environment.proxy.port && environment.proxy.port <= 0) throw "Proxy port is less than 0";
-    if (environment.proxy.port && environment.proxy.port > 65535) throw "Proxy port is greater than 65535";
+    if (!process.env.DISK_DF_PATH || process.env.DISK_DF_PATH.trim() === '')
+      throw 'DISK_DF_PATH is empty';
 
-    // Check admin
-    if (environment.admin.length == 0) Logger.warn("Admin list is empty");
+    // Check Bot
+    if (!process.env.BOT_NAME || process.env.BOT_NAME.trim() === '')
+      throw 'BOT_NAME is empty';
+
+    if (!process.env.BOT_TOKEN || process.env.BOT_TOKEN.trim() === '')
+      throw 'BOT_TOKEN is empty';
+
+    if (process.env.BOT_TOKEN.length < 10 || process.env.BOT_TOKEN.length > 100)
+      throw 'BOT_TOKEN is invalid';
+
+    // Check Proxy 
+    const port = Number(process.env.PROXY_PORT);
+    const host = process.env.PROXY_HOST;
+    if (!(
+      (host && port && host.trim() != "" && (port > 0 || port < 65535)) ||
+      (!host && !port)
+    )) throw 'Check PROXY_HOST or PROXY_PORT';
+
+    // Check Admins
+    const admins = process.env.ADMINS?.split(',').map(a => a.trim()).filter(a => a);
+    if (!admins || admins.length === 0) Logger.warn('ADMINS list is empty');
 
     return true;
   } catch (error) {
-    Logger.error(error);
+    Logger.error(`Initialization check failed: ${error}`);
     return false;
   }
 }
