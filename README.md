@@ -1,7 +1,7 @@
 # MonitorLin
 MonitorLin is a lightweight monitoring tool for Linux systems, designed to track system performance and resource usage efficiently.
 
-## Installation
+## Installation (Docker)
 
 1. **Create directory for app**
 ```bash 
