@@ -12,7 +12,7 @@ MonitorLin is a lightweight monitoring tool for Linux systems, designed to track
   ```bash
   nano env
   ```
-  and paste the above settings with your own data
+  - Paste the above settings with your own data
   ```text
   # Node
   NODE_NAME=
@@ -43,7 +43,7 @@ MonitorLin is a lightweight monitoring tool for Linux systems, designed to track
   ```bash
   sudo crontab -e
   ```
-  and set "*/30 * * * * /opt/monitor-lin/df_output.sh"
+  - set "*/30 * * * * /opt/monitor-lin/df_output.sh"
 
 5. **Create docker network**
    ```bash 
