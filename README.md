@@ -1,6 +1,88 @@
 # MonitorLin
 MonitorLin is a lightweight monitoring tool for Linux systems, designed to track system performance and resource usage efficiently.
 
+## Installation
+
+1. **Create directory for app**
+   ```bash 
+   mkdir /opt/monitor-lin
+   cd /opt/monitor-lin
+   ```
+2. **Create env file**
+  ```bash
+  nano env
+  ```
+  and paste the above settings with your own data
+  ```text
+  # Node
+  NODE_NAME=
+  CPU_LIMIT=
+  MEMORY_LIMIT=
+  DISK_DF_PATH=df_output.txt
+
+  # Telegram bot
+  BOT_NAME=
+  BOT_TOKEN=
+  ADMINS=
+
+  # Proxy
+  PROXY_HOST=
+  PROXY_PORT=
+  ```
+  - If you want to use the proxy from your system, you should set the PROXY_HOST parameter to host.docker.internal.
+  - PROXY_PORT is your system local proxy port.
+  - Ensure that you proxy is configured to bind to 0.0.0.0 instead of 127.0.0.1
+
+3. **Config df_output.txt file and cron job**
+   ```bash
+   wget https://raw.githubusercontent.com/Hsnmsri/monitor-lin/refs/heads/main/df_output.sh
+   sudo chmod +x df_output.sh
+   ```
+
+4. **Set cron job for run df_output.sh**
+  ```bash
+  sudo crontab -e
+  ```
+  and set "*/30 * * * * /opt/monitor-lin/df_output.sh"
+
+5. **Create docker network**
+   ```bash 
+   docker network create \
+    --subnet=172.30.0.0/16 \
+    monitor-lin-net
+   ``` 
+
+6. **Create docker-compose and run app**
+  ```bash 
+  nano docker-compose.yml
+  ```
+  and set above config 
+  ```yml
+  version: '3.8'
+
+  services:
+    monitor-lin:
+      image: hosseinmansouri/monitor-lin
+      container_name: monitor-lin
+      restart: unless-stopped
+      volumes:
+        - ./env:/app/.env
+        - ./df_output:/app/df_output
+      extra_hosts:
+        - "host.docker.internal:host-gateway"
+      networks:
+        - monitor-lin-net
+
+  networks:
+    monitor-lin-net:
+      external: true
+  ```
+
+7. **Run app**
+   ```bash 
+   docker-compose up -d
+   ```
+
 # Development
 
 ## Getting Started with Development
