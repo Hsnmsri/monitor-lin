@@ -7,6 +7,7 @@ import { CpuService } from './services/cpu/cpu.service';
 import { MemoryService } from './services/memory/memory.service';
 import { DiskService } from './services/disk/disk.service';
 import { ConfigModule } from '@nestjs/config';
+import { SettingService } from './services/setting/setting.service';
 
 @Module({
   imports: [
@@ -16,6 +17,6 @@ import { ConfigModule } from '@nestjs/config';
     TelegramModule,
   ],
   controllers: [AppController],
-  providers: [AppService, TelegramService, CpuService, MemoryService, DiskService],
+  providers: [AppService, TelegramService, CpuService, MemoryService, DiskService, SettingService],
 })
 export class AppModule { }
