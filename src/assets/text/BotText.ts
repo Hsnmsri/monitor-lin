@@ -1,6 +1,6 @@
 export const BotText = {
     global_welcome: "Welcome to <strong>:bot_name</strong> bot!\n- Your telegram id is <code>:user_id</code>",
-    short_report: `⛓️ <strong>Kali Linux Node</strong> – Status Report
+    short_report: `⛓️ <strong>:node_name Node</strong> – Status Report
 
 🖥 <strong>CPU</strong>
 • Total Usage: :cpu_total_usage
