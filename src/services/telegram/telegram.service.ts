@@ -10,7 +10,7 @@ import { MemoryService } from '../memory/memory.service';
 import formatDataKB from 'src/helpers/formatDataKB';
 import Disk from 'src/core/models/Disk.model';
 import { DiskService } from '../disk/disk.service';
-import { ConfigService } from '@nestjs/config';
+import { SettingService } from '../setting/setting.service';
 
 @Injectable()
 @Update()
@@ -19,7 +19,7 @@ export class TelegramService {
         private readonly cpuService: CpuService,
         private readonly memoryService: MemoryService,
         private readonly diskService: DiskService,
-        private readonly configService: ConfigService
+        private readonly settingService: SettingService
     ) { }
 
     @Start()
@@ -96,6 +96,7 @@ export class TelegramService {
         const diskUsage: Disk | false = await this.diskService.getUsage();
 
         await context.replyWithHTML(formatText('short_report', {
+            node_name: this.settingService.getNodeName() ?? "NOT_SET",
             cpu_total_usage: `${cpuUsage.total_usage.total_usage_percent?.toString() ?? "0"}%`,
             cpu_cores: cpuUsage.cores.length.toString(),
             cpu_core_usage: cpuUsage.cores.map(core => `${core.total_usage_percent}%`).join(" | "),
