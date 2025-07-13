@@ -118,7 +118,7 @@ export class SettingService {
      */
     getProxy(): Proxy | null {
         try {
-            if (this.env.proxy || this.env.proxy.host || this.env.proxy.port) {
+            if (!this.env.proxy || !this.env.proxy.host || !this.env.proxy.port) {
                 return null;
             }
 
