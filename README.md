@@ -76,11 +76,11 @@ version: '3.8'
 
 services:
  monitor-lin:
-   image: hosseinmansouri/monitor-lin
+   image: hosseinmansouri/monitor-lin:v1.1.0
    container_name: monitor-lin
    restart: unless-stopped
    volumes:
-     - ./env:/app/.env
+     - ./env.json:/app/dist/environment/env.json
      - ./df_output:/app/df_output
    extra_hosts:
      - "host.docker.internal:host-gateway"
